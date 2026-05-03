@@ -42,14 +42,15 @@ class Carpet(models.Model):
 
 # الطلب
 class Order(models.Model):
-
     STATUS_CHOICES = (
         ('Pending', 'قيد الانتظار'),
         ('Processing', 'جاري التجهيز'),
         ('Shipped', 'تم الإرسال لشركة الشحن'),
         ('Delivered', 'تم التوصيل'),
-        ('Cancelled', 'ملغي'),
+        ('Cancelled', 'ملغي (من قبل العميل)'),
+        ('Returned', 'مرتجع (لم يتم الاستلام)'),
     )
+
 
     # بيانات العميل
     first_name = models.CharField(max_length=50, verbose_name="الاسم الأول")
