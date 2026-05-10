@@ -1,13 +1,16 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
-
-app_name = 'app1'
 
 urlpatterns = [
-    # 1. عرض السجاد
-    path('', views.product_list, name='product_list'), # الصفحة الرئيسية (تعرض كل السجاد)
-    path('category/<slug:category_slug>/', views.product_list, name='product_list_by_category'), # عرض قسم معين
+    # 0. الصفحة الرئيسية للموقع
+    path('home/', views.home, name='home'),
+
+    # 1. عرض المنتجات
+    path('products/', views.product_list, name='product_list'), #تعرض كل السجاد
+    path('category/<slug:category_slug>/', views.product_list, name='product_list_by_category'), # الفلترة
     path('product/<int:id>/', views.product_detail, name='product_detail'), # صفحة تفاصيل سجادة واحدة
 
     # 2. روابط سلة المشتريات
@@ -16,6 +19,8 @@ urlpatterns = [
     path('cart/remove/<int:carpet_id>/', views.cart_remove, name='cart_remove'), # رابط مخفي لحذف منتج
 
     # 3. روابط الطلبات والدفع
-    path('checkout/', views.order_create, name='order_create'), # صفحة إتمام الطلب (الدفع)
-    path('order/cancel/<int:order_id>/', views.order_cancel, name='order_cancel'), # رابط إلغاء الطلب
+    path('checkout/', views.order_create, name='order_create'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

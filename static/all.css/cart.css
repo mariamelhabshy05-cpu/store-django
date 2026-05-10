@@ -1,0 +1,131 @@
+body {
+  font-family: Arial;
+  margin: 0;
+  background: #fff;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 40px;
+  border-bottom: 1px solid #eee;
+}
+
+.header nav a {
+  margin: 0 10px;
+  text-decoration: none;
+  color: #555;
+}
+
+/* CONTAINER */
+.cart-container {
+  padding: 40px;
+}
+
+/* TABLE */
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.cart-table th,
+.cart-table td {
+  border: 1px solid #eee;
+  padding: 15px;
+  text-align: left;
+}
+
+.product {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.product img {
+  width: 60px;
+}
+
+.remove {
+  color: red;
+  cursor: pointer;
+}
+
+/* INPUT */
+input[type="number"] {
+  width: 50px;
+  padding: 5px;
+}
+
+/* COUPON */
+.coupon {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.coupon input {
+  padding: 10px;
+  width: 200px;
+}
+
+.coupon button {
+  background: #c9a27c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+}
+
+/* BOTTOM SECTION */
+.cart-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+/* RELATED */
+.related {
+  flex: 2;
+}
+
+.products {
+  display: flex;
+  gap: 20px;
+}
+
+.card {
+  border: 1px solid #eee;
+  padding: 10px;
+  text-align: center;
+}
+
+.card img {
+  width: 100%;
+}
+
+/* TOTALS */
+.totals {
+  flex: 1;
+}
+
+.box {
+  border: 1px solid #eee;
+  padding: 20px;
+}
+
+.box .row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.checkout {
+  width: 100%;
+  background: #c9a27c;
+  color: white;
+  padding: 15px;
+  border: none;
+  margin-top: 10px;
+  cursor: pointer;
+}

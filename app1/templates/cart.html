@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% if carpet.image_url %}
+            <img src="{{ carpet.image_url }}" alt="{{ carpet.name }}" style="width: 100%; height: 250px; object-fit: cover;">
+          {% else %}
+            <img src="{% static 'images/default_carpet.jpg' %}" alt="صورة" style="width: 100%; height: 250px; object-fit: cover;">
+          {% endif %}
+</body>
+</html>

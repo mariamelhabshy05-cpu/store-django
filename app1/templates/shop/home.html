@@ -1,0 +1,198 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naseej - نسيج</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Cairo:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'all.css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'all.css/home.css' %}">
+</head>
+
+<body class="bg-white">
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg fixed-top" >
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'home' %}">Naseej</a>
+      <div class="collapse navbar-collapse justify-content-center" id="navMenu">
+        <ul class="navbar-nav gap-1">
+          <li class="nav-item"><a class="nav-link active" href="{% url 'home' %}">الرئيسية</a></li>
+          <li class="nav-item"><a class="nav-link" href="#collections">التصنيفات</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'product_list' %}">المنتجات</a></li>
+          <li class="nav-item"><a class="nav-link" href="#newsletter">انضم لنا</a></li>
+          <li class="nav-item"><a class="nav-link" href="#footer">عن نحن</a></li>
+        </ul>
+      </div>
+       <div class="navbar-icons d-flex align-items-center gap-3">
+         <!-- تم تعديل شريط البحث ليعمل كـ Form حقيقي يرسل البيانات لصفحة المنتجات -->
+         <form action="{% url 'product_list' %}" method="GET" class="m-0 p-0">
+             <input type="text" name="q" class="search-bar d-none d-md-block" placeholder="ابحث في Naseej..."/>
+         </form>
+
+        <a href="#"><i class="fa-solid fa-location-dot"></i></a>
+        <a href="{% url 'cart_detail' %}"><i class="fa-solid fa-bag-shopping"></i></a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero mb-5">
+    <div class="cover"></div>
+    <img class="hero-img" src="{% static 'images/hero3.jpg' %}" alt="سجاد نسيج"/>
+    <div class="hero-overlay"></div>
+    <div class="container">
+      <div class="hero-content">
+        <h1>سجاد يليق بذوقك الرفيع</h1>
+        <p>اكتشف مجموعتنا المختارة من السجاد المتنوع والآلي الفاخر، المصمم لإضفاء الدفء والجمال على كل مكان.</p>
+        <a href="#collections" class="btn-hero">استكشف المجموعة</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 2 : MOSAIC ── -->
+  <section class="container mosaic-section" id="collections">
+    <div class=" mt-5 pt-5 px-0">
+      <div class="row g-2 mb-2 mt-5 ">
+      <div class="col-md-4">
+          <div class="card-wrap big-card">
+           <a href="{% url 'product_list' %}"><img src="{% static 'images/farsee.jpg' %}" alt="السجاد الفارسي"/></a>
+            <div class="card-label">
+              <div class="cat">مجموعة الفن</div>
+              <div class="name">السجاد الفارسي</div>
+              <div class="sub">مقاطعة النخب النبية</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 d-flex flex-column gap-2">
+          <div class="card-wrap small-card">
+             <a href="{% url 'product_list' %}"><img src="{% static 'images/LUCILLE RUG - 2000X3000MM.jfif' %}" alt="مودرن"/></a>
+            <div class="card-label">
+              <div class="cat">مجموعة الفنون</div>
+              <div class="name">مودرن</div>
+              <div class="sub">الأسلوب المعاصر</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card-wrap bottom-card">
+          <a href="{% url 'product_list' %}">  <img src="{% static 'images/Иранский ковер из акрила.jfif' %}" alt="كلاسيكي"/></a>
+            <div class="card-label">
+              <div class="cat">أكثر مبيعاً</div>
+              <div class="name">كلاسيكي</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-2 ">
+          <div class=" col-6 card-wrap small-card">
+           <a href="{% url 'product_list' %}"><img src="{% static 'images/وصلت حديثًا؛ سجادة بيدجار باللون التركوازي المميز ، قطعة واحدة متوفرة فقط_ مقاس القطعة_ ٤٥٣ في ٣٦٦ سنتيمتر الخامة_ صوف أفغاني ناعم من منطقة غازني الغرز_ ١٣٠ غرزة في الإنش المربع الواحد السعر_ ٢٦،٧٧٥ ريال سعودي متو.jfif' %}" alt="تركي"/></a>
+            <div class="card-label">
+              <div class="cat">مجموعة التراث</div>
+              <div class="name">تركي</div>
+              <div class="sub">الأديرة الأسلوبية</div>
+            </div>
+          </div>
+        <div class="col-md-6">
+          <div class="card-wrap bottom-card">
+         <a href="{% url 'product_list' %}">      <img src="{% static 'images/للاطفال.jpg' %}" alt="للأطفال"/></a>
+            <div class="card-label">
+              <div class="cat">مجموعة جديدة</div>
+              <div class="name">للأطفال</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container mt-5 pt-5">
+     <section>
+   <!-- ── FILTERS ── -->
+   <div class="title" style=" color: #1a1a18;">
+    <h2> الاكثر مبيعا </h2>
+   </div>
+
+  <!-- ── PRODUCTS GRID (Dynamic from Database) ── -->
+  <div class="row g-0 px-4 pt-4 pb-5">
+
+    {% for carpet in carpets %}
+    <div class="col-6 col-md-3 product-col">
+      <div class="product-card">
+        <div class="product-img-wrap">
+          {% if carpet.image_url %}
+            <img src="{{ carpet.image_url }}" alt="{{ carpet.name }}" style="width: 100%; height: 250px; object-fit: cover;">
+          {% else %}
+            <img src="{% static 'images/default_carpet.jpg' %}" alt="صورة" style="width: 100%; height: 250px; object-fit: cover;">
+          {% endif %}
+
+          <div class="product-badges d-flex gap-2">
+            <!-- تم التعديل هنا: توجيه المستخدم لصفحة تفاصيل هذا المنتج تحديداً -->
+            <span class="pbadge">
+              <a href="{% url 'product_detail' carpet.id %}"><i class="fa-solid fa-bag-shopping"></i> تصفح المنتج </a>
+            </span>
+          </div>
+        </div>
+        <div class="product-info text-center">
+          <div class="details d-flex justify-content-center">
+              <div class="product-name mx-3">{{ carpet.name }}</div>
+          </div>
+          <div class="product-price">{{ carpet.price }} ج.م</div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+      <div class="col-12 text-center">
+          <p>لا توجد منتجات متاحة حالياً.</p>
+      </div>
+    {% endfor %}
+
+  </div>
+ </section>
+ </div>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-12 col-md-4">
+          <div class="footer-brand">Naseej</div>
+          <p class="footer-brand-desc">نسيج – أحد المجموعات الخاصة بنا في العالم للمساحات المعاصرة، بالتراث والمساحة والروح الإنسانية.</p>
+        </div>
+        <div class="col-6 col-md-2">
+          <h6>تسوق</h6>
+          <ul>
+            <li><a href="{% url 'home' %}">الرئيسية</a></li>
+            <li><a href="#collections">التصنيفات</a></li>
+            <li><a href="{% url 'product_list' %}">المنتجات</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md-2">
+          <h6>مساعدة</h6>
+          <ul>
+            <li><a href="#newsletter">انضم لنا </a></li>
+            <li><a href="#">سياسة الخصوصية</a></li>
+            <li><a href="#">شروط الخدمة</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 نسيج. جميع حقوق النشر والتوزيع محفوظة.</span>
+        <div class="footer-icons">
+          <a href="#"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#"><i class="fa-brands fa-facebook"></i></a>
+          <a href="#"><i class="fa-solid fa-envelope"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'all.css/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

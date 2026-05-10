@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.contrib import messages
@@ -7,8 +6,19 @@ from .forms import CartAddProductForm, OrderCreateForm
 
 
 
-# 1. كلاس السلة (Cart Session)
+# ==========================================
+# 0. الصفحة الرئيسية (Home View)
+# ==========================================
+def home(request):
+    # جلب أحدث 4 سجادات متاحة لعرضها في قسم "الأكثر مبيعاً" في الصفحة الرئيسية
+    featured_carpets = Carpet.objects.filter(available=True)[:4]
 
+    return render(request, 'shop/home.html', {
+        'carpets': featured_carpets
+    })
+
+
+# كلاس السلة
 class Cart:
     def __init__(self, request):
         self.session = request.session
@@ -46,10 +56,14 @@ class Cart:
         cart_items = self.cart.copy()
         for carpet in carpets:
             cart_items[str(carpet.id)]['carpet'] = carpet
+            # هذا هو السطر الجديد لحساب مجموع سعر السجادة الواحدة حسب كميتها
+            cart_items[str(carpet.id)]['total_price'] = float(cart_items[str(carpet.id)]['price']) * cart_items[str(carpet.id)]['quantity']
         return cart_items.values()
 
     def get_total_price(self):
         return sum(float(item['price']) * item['quantity'] for item in self.cart.values())
+
+
 
 
 # ==========================================
@@ -61,75 +75,103 @@ def product_list(request, category_slug=None):
     # جلب السجاد المتاح في المخزن فقط كبداية
     carpets = Carpet.objects.filter(available=True)
 
-    # ==========================================
-    # --- كود الفلترة الجديد ---
-    # ==========================================
+    # --- كود الفلترة ---
     search_query = request.GET.get('q')  # للبحث بالاسم
     min_price = request.GET.get('min_price')  # الحد الأدنى للسعر
     max_price = request.GET.get('max_price')  # الحد الأقصى للسعر
 
-    # 1. الفلترة بكلمة البحث (إذا كتب العميل اسم السجادة)
     if search_query:
         carpets = carpets.filter(name__icontains=search_query)
-
-    # 2. الفلترة بالحد الأدنى للسعر
     if min_price:
         carpets = carpets.filter(price__gte=min_price)
-
-    # 3. الفلترة بالحد الأقصى للسعر
     if max_price:
         carpets = carpets.filter(price__lte=max_price)
-    # ==========================================
 
-    # الفلترة بال Category
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
         carpets = carpets.filter(category=category)
 
-    return render(request, 'HtmlPages/home.html', {
+    return render(request, 'shop/product_list.html', {
         'category': category,
         'categories': categories,
         'carpets': carpets
     })
 
+
 def product_detail(request, id):
     carpet = get_object_or_404(Carpet, id=id, available=True)
+
     cart_product_form = CartAddProductForm()
-    return render(request, 'HtmlPages/home.html', {
+
+    related_products = Carpet.objects.filter(category=carpet.category, available=True).exclude(id=carpet.id)[:4]
+
+    return render(request, 'shop/product_detail.html', {
         'carpet': carpet,
-        'cart_product_form': cart_product_form
+        'cart_product_form': cart_product_form,
+        'related_products': related_products
     })
 
 
 
+# ==========================================
 # 3. إدارة السلة (Cart Views)
-
+# ==========================================
 @require_POST
 def cart_add(request, carpet_id):
     cart = Cart(request)
     carpet = get_object_or_404(Carpet, id=carpet_id)
     form = CartAddProductForm(request.POST)
+
     if form.is_valid():
         cd = form.cleaned_data
-        cart.add(carpet=carpet, quantity=cd['quantity'], override_quantity=cd['override'])
+        desired_quantity = cd['quantity']
+        is_override = cd['override']
+
+        current_qty_in_cart = cart.cart.get(str(carpet_id), {}).get('quantity', 0)
+
+        if is_override:
+            total_requested = desired_quantity
+        else:
+            total_requested = current_qty_in_cart + desired_quantity
+
+        if total_requested > carpet.stock:
+            if carpet.stock == 0:
+                messages.error(request, f"عذراً، المنتج '{carpet.name}' قد نفذ من المخزن حالياً.")
+            else:
+                messages.error(request,
+                               f"عذراً، أقصى كمية متاحة من '{carpet.name}' هي {carpet.stock}. (لديك {current_qty_in_cart} في السلة)")
+        else:
+            cart.add(carpet=carpet, quantity=desired_quantity, override_quantity=is_override)
+            messages.success(request, f"تم تحديث السلة بنجاح.")
+
     return redirect('cart_detail')
+
 
 
 def cart_remove(request, carpet_id):
     cart = Cart(request)
     carpet = get_object_or_404(Carpet, id=carpet_id)
     cart.remove(carpet)
+    messages.success(request, "تم حذف المنتج من السلة.")
     return redirect('cart_detail')
 
 
 def cart_detail(request):
     cart = Cart(request)
-    return render(request, 'cart/cart_detail.html', {'cart': cart})
+    cart_items = cart.get_items()
+
+    for item in cart_items:
+        item['update_quantity_form'] = CartAddProductForm(initial={
+            'quantity': item['quantity'],
+            'override': True
+        })
+
+    return render(request, 'cart/cart_detail.html', {'cart': cart, 'cart_items': cart_items})
 
 
-
-# 4. الطلبات وإلغاء الطلب (Order Views)
-
+# ==========================================
+# 4. الطلبات (Order Views)
+# ==========================================
 def order_create(request):
     cart = Cart(request)
     if not cart.cart:
@@ -146,34 +188,11 @@ def order_create(request):
                     price=item['price'],
                     quantity=item['quantity']
                 )
+            # تفريغ السلة بعد إتمام الطلب
             cart.clear()
-
-
-            request.session['last_order_id'] = order.id
 
             return render(request, 'orders/order_success.html', {'order': order})
     else:
         form = OrderCreateForm()
 
     return render(request, 'orders/order_create.html', {'cart': cart, 'form': form})
-
-
-def order_cancel(request, order_id):
-    # جلب الطلب
-    order = get_object_or_404(Order, id=order_id)
-
-    # التأكد أن من يطلب الإلغاء هو نفس المتصفح الذي قام بالطلب (أمان)
-    if request.session.get('last_order_id') == order.id:
-        # لا يمكنه الإلغاء إلا إذا كان الطلب لسه قيد الانتظار أو التجهيز
-        if order.status in ['Pending', 'Processing']:
-            order.status = 'Cancelled'
-            order.save()
-            # إرسال رسالة نجاح تظهر في الـ HTML
-            messages.success(request, "تم إلغاء طلبك بنجاح.")
-        else:
-            messages.error(request, "عذراً، لا يمكن إلغاء الطلب لأنه تم شحنه بالفعل.")
-    else:
-        messages.error(request, "غير مصرح لك بإلغاء هذا الطلب.")
-
-    # توجيه العميل للصفحة الرئيسية أو لصفحة نجاح الإلغاء
-    return redirect('product_list')

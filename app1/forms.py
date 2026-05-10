@@ -1,14 +1,20 @@
+
 from django import forms
 from .models import Order
 
+
+QUANTITY_CHOICES = [(i, str(i)) for i in range(1, 11)]
+
+
 class CartAddProductForm(forms.Form):
-
-    QUANTITY_CHOICES = [(i, str(i)) for i in range(1, 4)]
-
     quantity = forms.TypedChoiceField(
         choices=QUANTITY_CHOICES,
         coerce=int,
-        label="Quantity"
+        label="الكمية",
+        widget=forms.Select(attrs={
+            'class': 'form-control text-center m-0',
+            'style': 'width: 65px; padding: 5px; cursor: pointer;'
+        })
     )
 
     override = forms.BooleanField(required=False, initial=False, widget=forms.HiddenInput)
@@ -28,5 +34,6 @@ class OrderCreateForm(forms.ModelForm):
             'address': forms.Textarea(
                 attrs={'class': 'form-control', 'placeholder': 'Enter detailed address here...', 'rows': 3}),
             'notes': forms.Textarea(
-                attrs={'class': 'form-control', 'placeholder': 'Any additional notes for shipping (Optional)', 'rows': 2}),
+                attrs={'class': 'form-control', 'placeholder': 'Any additional notes for shipping (Optional)',
+                       'rows': 2}),
         }

@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تم الطلب بنجاح | NASEEJ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Cairo:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- ربط ملفات التصميم -->
+    <link rel="stylesheet" href="{% static 'all.css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'all.css/home.css' %}">
+
+    <style>
+        .success-card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            padding: 50px 30px;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+            border-top: 5px solid rgb(184, 134, 74);
+        }
+        .success-icon {
+            color: rgb(184, 134, 74);
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+        .order-details-box {
+            background-color: #fcfcfc;
+            border: 1px solid #f0f0f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            text-align: right;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed #e0e0e0;
+            padding-bottom: 10px;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+  <!-- NAVBAR -->
+   <div class="m-0">
+      <nav class="navbar bg-white px-4 py-3 shadow-sm fixed-top">
+        <div class="container d-flex justify-content-center">
+            <a href="{% url 'home' %}" class="nav-logo" style="text-decoration: none; color: #1a1a18; font-weight: bold; font-size: 1.8rem; letter-spacing: 1px;">Naseej</a>
+        </div>
+      </nav>
+   </div>
+
+  <!-- PAGE BODY -->
+   <section class="container" style="margin-top: 120px; margin-bottom: 80px;">
+        <div class="success-card">
+
+            <!-- أيقونة النجاح -->
+            <i class="fa-solid fa-circle-check success-icon"></i>
+
+            <h1 class="fw-bold mb-3" style="color: #1a1a18;">شكراً لتسوقك معنا!</h1>
+            <p class="text-muted fs-5 mb-4">تم استلام طلبك بنجاح وجاري تجهيزه للشحن قريباً.</p>
+
+            <!-- صندوق تفاصيل الطلب -->
+            <div class="order-details-box">
+                <div class="detail-row">
+                    <span class="text-muted">رقم الطلب:</span>
+                    <span class="fw-bold" style="color: rgb(184, 134, 74);">#{{ order.id }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="text-muted">الاسم:</span>
+                    <span class="fw-bold">{{ order.first_name }} {{ order.last_name }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="text-muted">طريقة الدفع:</span>
+                    <span class="fw-bold">الدفع عند الاستلام</span>
+                </div>
+                <div class="detail-row">
+                    <span class="text-muted">حالة الطلب:</span>
+                    <span class="fw-bold text-success">قيد المراجعة</span>
+                </div>
+            </div>
+
+            <p class="text-muted small mb-4">لقد أرسلنا تفاصيل الطلب إلى بريدك الإلكتروني (إن وجد). سيتواصل معك مندوبنا قريباً لتأكيد موعد التسليم.</p>
+
+            <!-- أزرار التوجيه -->
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{% url 'product_list' %}" class="btn" style="background-color: #1a1a18; color: white; padding: 12px 30px; font-weight: 600; border-radius: 5px;">
+                    مواصلة التسوق
+                </a>
+                <a href="{% url 'home' %}" class="btn btn-outline-dark" style="padding: 12px 30px; font-weight: 600; border-radius: 5px;">
+                    الرئيسية
+                </a>
+            </div>
+
+        </div>
+   </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-dark text-white text-center py-4 mt-auto">
+    <span class="d-block mb-3">© 2026 NASEEJ. ALL RIGHTS RESERVED.</span>
+    <span class="f-logo fs-4 fw-bold" style="letter-spacing: 2px;">NASEEJ</span>
+  </footer>
+
+  <script src="{% static 'all.css/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

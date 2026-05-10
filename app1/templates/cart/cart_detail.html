@@ -1,0 +1,142 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>سلة المشتريات - Naseej</title>
+
+  <!-- ربط ملفات الـ CSS -->
+  <link rel="stylesheet" href="{% static 'all.css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'all.css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'all.css/cart.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-white">
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg fixed-top" >
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'home' %}">Naseej</a>
+      <div class="collapse navbar-collapse justify-content-center" id="navMenu">
+        <ul class="navbar-nav gap-1">
+          <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">الرئيسية</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'home' %}#collections">التصنيفات</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'product_list' %}">المنتجات</a></li>
+          <li class="nav-item"><a class="nav-link" href="#newsletter">انضم لنا</a></li>
+          <li class="nav-item"><a class="nav-link" href="#footer">عن نحن</a></li>
+        </ul>
+      </div>
+       <div class="navbar-icons d-flex align-items-center gap-3">
+         <form action="{% url 'product_list' %}" method="GET" class="m-0 p-0">
+             <input type="text" name="q" class="search-bar d-none d-md-block" placeholder="ابحث في Naseej..."/>
+         </form>
+        <a href="#"><i class="fa-solid fa-location-dot"></i></a>
+        <a href="{% url 'cart_detail' %}"><i class="fa-solid fa-bag-shopping"></i></a>
+      </div>
+    </div>
+  </nav>
+
+<div class="container mt-5 pt-5">
+
+    <!-- رسائل التنبيه (خطأ في المخزون أو نجاح) -->
+    {% if messages %}
+      <div class="mt-4 mb-4">
+        {% for message in messages %}
+          <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %} text-center shadow-sm">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <section class="cart-container">
+  <!-- جدول الكارت -->
+  <table class="cart-table w-100 text-center">
+    <thead>
+      <tr>
+        <th>حذف</th>
+        <th>المنتج</th>
+        <th>السعر</th>
+        <th>الكمية</th>
+        <th>المجموع</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <!-- لاحظ أننا أصبحنا نستخدم cart_items القادمة من الـ View بدلاً من cart.get_items -->
+      {% for item in cart_items %}
+      <tr>
+        <td class="remove">
+            <a href="{% url 'cart_remove' item.carpet.id %}" class="text-danger" style="text-decoration: none; font-size: 1.5rem;">×</a>
+        </td>
+        <td class="product d-flex align-items-center justify-content-center gap-3">
+          {% if item.carpet.image_url %}
+            <img src="{{ item.carpet.image_url }}" alt="{{ item.carpet.name }}" style="width: 80px; height: auto; border-radius: 5px;">
+          {% else %}
+            <img src="{% static 'images/default_carpet.jpg' %}" alt="صورة" style="width: 80px; height: auto;">
+          {% endif %}
+          <span>{{ item.carpet.name }}</span>
+        </td>
+        <td>{{ item.price }} جنيه</td>
+
+        <!-- حقل الكمية الجديد الفعال -->
+        <td style="width: 150px;">
+          {% if item.carpet.stock > 0 %}
+              <form action="{% url 'cart_add' item.carpet.id %}" method="POST" class="d-flex align-items-center justify-content-center gap-2 m-0 p-0">
+                  {% csrf_token %}
+                  {{ item.update_quantity_form.quantity }}
+                  {{ item.update_quantity_form.override }}
+                  <button type="submit" class="btn btn-sm border" style="background-color: #f8f9fa; color: #1a1a18;" title="تحديث الكمية">
+                      <i class="fa-solid fa-rotate"></i>
+                  </button>
+              </form>
+          {% else %}
+              <span class="text-danger fw-bold small"><i class="fa-solid fa-triangle-exclamation"></i> نفذت الكمية</span>
+          {% endif %}
+        </td>
+
+        <td class="fw-bold">{{ item.total_price }} جنيه</td>
+      </tr>
+      {% empty %}
+      <tr>
+          <td colspan="5" class="text-center py-5 text-muted fs-5">سلة المشتريات فارغة حالياً.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- كوبون -->
+  <div class="coupon mt-4">
+    <input type="text" placeholder="رقم الكوبون">
+    <button>ادخل الكوبون </button>
+  </div>
+
+  <div class="cart-bottom mt-5">
+    <div class="totals p-4 border rounded" style="background-color: #f9f9f9;">
+      <h2>مجموع السلة</h2>
+
+      <div class="box mt-3">
+        <div class="row d-flex justify-content-between mb-2 px-3">
+          <span>المجموع الفرعي:</span>
+          <span>{{ cart.get_total_price }} جنيه</span>
+        </div>
+        <div class="row d-flex justify-content-between px-3 border-top pt-2">
+          <strong>الإجمالي الكلي:</strong>
+          <strong>{{ cart.get_total_price }} جنيه</strong>
+        </div>
+      </div>
+
+      {% if cart.get_items %}
+        <a href="{% url 'order_create' %}"><button class="checkout btn w-100 mt-4" style="background-color: #1a1a18; color: white;">ادفع الآن</button></a>
+      {% else %}
+        <button class="checkout btn w-100 mt-4" disabled style="background-color: #ccc; color: white;">السلة فارغة</button>
+      {% endif %}
+    </div>
+  </div>
+
+</section>
+</div>
+
+<script src="{% static 'all.css/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

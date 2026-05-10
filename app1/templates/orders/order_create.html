@@ -1,0 +1,202 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>إتمام الطلب | NASEEJ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Cairo:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="{% static 'all.css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'all.css/place_order.css' %}">
+
+  <style>
+      /* تعديلات بسيطة ليتناسب تصميمك مع حقول جانغو */
+      .f-input, .form-control {
+          margin-bottom: 15px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          padding: 12px;
+          width: 100%;
+          font-family: inherit;
+      }
+      .errorlist {
+          color: red;
+          list-style: none;
+          padding: 0;
+          font-size: 0.9em;
+          margin-top: -10px;
+          margin-bottom: 10px;
+      }
+  </style>
+</head>
+<body class="bg-light">
+
+  <!-- NAVBAR -->
+   <div class="m-0">
+      <nav class="navbar bg-white px-4 py-3 shadow-sm">
+        <a href="{% url 'home' %}" class="nav-logo" style="text-decoration: none; color: #1a1a18; font-weight: bold; font-size: 1.5rem;">Naseej</a>
+        <a href="{% url 'cart_detail' %}" class="nav-cart text-dark" style="font-size: 1.2rem;">
+            <i class="fa-solid fa-bag-shopping"></i>
+        </a>
+      </nav>
+   </div>
+
+  <!-- PAGE BODY -->
+   <section class="container mt-4 mb-5">
+    <div class="m-0">
+      <div class="page-body d-flex flex-column flex-lg-row gap-4">
+
+        <!-- RIGHT: Form -->
+        <div class="form-panel bg-white p-4 rounded shadow-sm flex-grow-1">
+
+          <div class="breadcrumb mb-4">
+            <span class="bc-active">دفع</span>
+            <span class="bc-sep mx-2">›</span>
+            <span class="bc-active">الشحن</span>
+            <span class="bc-sep mx-2">›</span>
+            <a href="{% url 'cart_detail' %}" class="text-decoration-none text-muted">السلة</a>
+          </div>
+
+          <!-- بداية فورم جانغو -->
+          <form action="{% url 'order_create' %}" method="POST">
+            {% csrf_token %}
+
+            <div class="sec-title fw-bold mb-3">معلومات التواصل</div>
+            {{ form.email }}
+            {{ form.email.errors }}
+
+            <div class="sec-title fw-bold mt-4 mb-3">عنوان الشحن</div>
+
+            <div class="f-row d-flex gap-3">
+                <div class="w-50">
+                    {{ form.first_name }}
+                    {{ form.first_name.errors }}
+                </div>
+                <div class="w-50">
+                    {{ form.last_name }}
+                    {{ form.last_name.errors }}
+                </div>
+            </div>
+
+            {{ form.phone_number }}
+            {{ form.phone_number.errors }}
+
+            {{ form.city }}
+            {{ form.city.errors }}
+
+            {{ form.address }}
+            {{ form.address.errors }}
+
+            <div class="sec-title fw-bold mt-4 mb-3">ملاحظات إضافية</div>
+            {{ form.notes }}
+            {{ form.notes.errors }}
+
+            <div class="sec-title fw-bold mt-4 mb-3">طريقة الدفع</div>
+
+            <div class="pay-opt active d-flex justify-content-between align-items-center p-3 border rounded mb-2" style="background-color: #f8f9fa; border-color: #1a1a18 !important;">
+              <div class="pay-left d-flex align-items-center gap-3">
+                <div class="pay-icon fs-4"><i class="fa-solid fa-money-bill-wave"></i></div>
+                <span class="fw-bold">الدفع عند الاستلام</span>
+              </div>
+              <div class="radio on" style="width: 18px; height: 18px; border-radius: 50%; border: 5px solid #1a1a18;"></div>
+            </div>
+
+            <div class="pay-opt dimmed d-flex justify-content-between align-items-center p-3 border rounded mb-4" style="opacity: 0.6;">
+              <div class="pay-left d-flex align-items-center gap-3">
+                <div class="pay-icon fs-4"><i class="fa-regular fa-credit-card"></i></div>
+                <span>البطاقة البنكية (قريباً)</span>
+              </div>
+              <div class="radio" style="width: 18px; height: 18px; border-radius: 50%; border: 2px solid #ccc;"></div>
+            </div>
+
+            <button type="submit" class="btn-buy btn w-100 py-3 fw-bold fs-5" style="background-color: #1a1a18; color: white; transition: 0.3s;">إتمام الشراء</button>
+
+            <div class="secure text-center mt-3 text-muted small">
+              <i class="fa-solid fa-lock"></i> جميع المعاملات مشفرة وآمنة
+            </div>
+          </form>
+        </div>
+
+        <!-- LEFT: Summary -->
+        <div class="summary-panel bg-white p-4 rounded shadow-sm" style="min-width: 350px;">
+
+          <div class="summary-title fw-bold mb-4 fs-5">ملخص الطلب</div>
+
+          <!-- تكرار منتجات السلة -->
+          {% for item in cart.get_items %}
+          <div class="product-row d-flex align-items-center gap-3 mb-3 pb-3 border-bottom">
+            <div class="prod-thumb position-relative" style="width: 65px; height: 65px;">
+              <div class="product-img w-100 h-100 rounded overflow-hidden border">
+                {% if item.carpet.image_url %}
+                    <img src="{{ item.carpet.image_url }}" alt="{{ item.carpet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                    <img src="{% static 'images/default_carpet.jpg' %}" alt="صورة" style="width: 100%; height: 100%; object-fit: cover;">
+                {% endif %}
+              </div>
+              <!-- شارة توضح الكمية من كل منتج -->
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
+                {{ item.quantity }}
+              </span>
+            </div>
+            <div class="prod-info flex-grow-1">
+              <div class="prod-name fw-bold" style="font-size: 0.95rem;">{{ item.carpet.name }}</div>
+              <div class="prod-meta text-muted small mt-1">
+                {% if item.carpet.category %} قسم: {{ item.carpet.category.name }}<br/> {% endif %}
+                السعر للوحدة: {{ item.price }} ج.م
+              </div>
+            </div>
+            <div class="prod-price fw-bold">{{ item.total_price }} ج.م</div>
+          </div>
+          {% empty %}
+            <p class="text-center text-muted">السلة فارغة.</p>
+          {% endfor %}
+
+          <!-- المجموع -->
+          <div class="price-line d-flex justify-content-between mt-4 mb-2">
+            <span class="text-muted">المجموع الفرعي</span>
+            <span class="fw-bold">{{ cart.get_total_price }} ج.م</span>
+          </div>
+
+          <div class="sep-line my-3" style="border-top: 2px dashed #eee;"></div>
+
+          <div class="total-row d-flex justify-content-between align-items-center mb-4">
+            <div class="total-right d-flex flex-column">
+              <span class="total-label fs-5 fw-bold">الإجمالي</span>
+              <span class="tax-note small text-muted">الدفع عند الاستلام</span>
+            </div>
+            <div class="total-amount fs-4 fw-bold" style="color: rgb(184, 134, 74);">{{ cart.get_total_price }} ج.م</div>
+          </div>
+
+          <div class="badges d-flex gap-2 justify-content-center mt-4">
+            <div class="badge bg-light text-dark border p-2 flex-grow-1 text-center">
+              <i class="fa-regular fa-circle-check" style="color: rgb(184, 134, 74);"></i> جودة مضمونة
+            </div>
+            <div class="badge bg-light text-dark border p-2 flex-grow-1 text-center">
+               <i class="fa-solid fa-shield" style="color: rgb(184, 134, 74);"></i> تسوق آمن
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+   </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-dark text-white text-center py-4 mt-5">
+    <span class="d-block mb-3">© 2026 NASEEJ. ALL RIGHTS RESERVED.</span>
+    <div class="f-links d-flex justify-content-center gap-4 mb-3">
+      <a href="#" class="text-white text-decoration-none small">CONTACT US</a>
+      <a href="#" class="text-white text-decoration-none small">SHIPPING</a>
+      <a href="#" class="text-white text-decoration-none small">TERMS</a>
+      <a href="#" class="text-white text-decoration-none small">PRIVACY</a>
+    </div>
+    <span class="f-logo fs-4 fw-bold" style="letter-spacing: 2px;">NASEEJ</span>
+  </footer>
+
+  <script src="{% static 'all.css/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

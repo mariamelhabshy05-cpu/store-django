@@ -1,0 +1,229 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ carpet.name }} | NASEEJ</title>
+    <!-- إضافة خط مناسب من Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'all.css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'all.css/product.css' %}">
+    <link rel="stylesheet" href="{% static 'all.css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="bg-white">
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg fixed-top" >
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'home' %}">Naseej</a>
+      <div class="collapse navbar-collapse justify-content-center" id="navMenu">
+        <ul class="navbar-nav gap-1">
+          <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">الرئيسية</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'home' %}#collections">التصنيفات</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'product_list' %}">المنتجات</a></li>
+          <li class="nav-item"><a class="nav-link" href="#newsletter">انضم لنا</a></li>
+          <li class="nav-item"><a class="nav-link" href="#footer">عن نحن</a></li>
+        </ul>
+      </div>
+       <div class="navbar-icons d-flex align-items-center gap-3">
+         <form action="{% url 'product_list' %}" method="GET" class="m-0 p-0">
+             <input type="text" name="q" class="search-bar d-none d-md-block" placeholder="ابحث في Naseej..."/>
+         </form>
+        <a href="#"><i class="fa-solid fa-location-dot"></i></a>
+        <a href="{% url 'cart_detail' %}"><i class="fa-solid fa-bag-shopping"></i></a>
+      </div>
+    </div>
+  </nav>
+
+    <!-- محتوى المنتج الرئيسي -->
+    <main class="container product-page mt-5 pt-5 pb-5">
+        <div class="row">
+            <!-- صورة المنتج -->
+            <div class="col-md-6 mb-4 d-flex justify-content-center">
+                <div class="product-image-wrapper shadow-sm rounded overflow-hidden" style="max-width: 100%; border: 1px solid #eee;">
+                    {% if carpet.image_url %}
+                        <img src="{{ carpet.image_url }}" alt="{{ carpet.name }}" style="width: 100%; height: auto; object-fit: cover; max-height: 500px;">
+                    {% else %}
+                        <img src="{% static 'images/default_carpet.jpg' %}" alt="صورة افتراضية" style="width: 100%; height: auto;">
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- تفاصيل المنتج -->
+            <div class="col-md-6 product-details ps-md-5">
+                <h1 class="fw-bold mb-3" style="color: #1a1a18;">{{ carpet.name }}</h1>
+                <div class="price fs-3 fw-bold mb-3" style="color: rgb(184, 134, 74);">{{ carpet.price }} ج.م</div>
+
+                <p class="description text-muted mb-4" style="line-height: 1.8; font-size: 1.1rem;">
+                    {{ carpet.description|linebreaksbr }}
+                </p>
+
+                <!-- ========================================== -->
+                <!-- مربع الخصائص الإضافية (تم تصميمه بناءً على المودل) -->
+                <!-- ========================================== -->
+                <div class="product-meta p-4 mb-4 rounded" style="background-color: #fcfcfc; border: 1px solid #f0f0f0;">
+                    <div class="row text-center">
+                        <!-- التصنيف -->
+                        <div class="col-6 col-md-3 mb-3">
+                            <i class="fa-solid fa-layer-group fs-4 mb-2" style="color: rgb(184, 134, 74);"></i>
+                            <div class="small fw-bold">التصنيف</div>
+                            <div class="text-muted small mt-1">{{ carpet.category.name }}</div>
+                        </div>
+                        <!-- المقاس -->
+                        <div class="col-6 col-md-3 mb-3">
+                            <i class="fa-solid fa-ruler-combined fs-4 mb-2" style="color: rgb(184, 134, 74);"></i>
+                            <div class="small fw-bold">المقاس</div>
+                            <div class="text-muted small mt-1">
+                                {% if carpet.length and carpet.width %}
+                                    {{ carpet.length }} × {{ carpet.width }} م
+                                {% else %}
+                                    غير محدد
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- الخامة -->
+                        <div class="col-6 col-md-3 mb-3">
+                            <i class="fa-solid fa-gem fs-4 mb-2" style="color: rgb(184, 134, 74);"></i>
+                            <div class="small fw-bold">الخامة</div>
+                            <div class="text-muted small mt-1">
+                                {% if carpet.material %}
+                                    {{ carpet.material }}
+                                {% else %}
+                                    غير محدد
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- حالة التوفر -->
+                        <div class="col-6 col-md-3 mb-3">
+                            <i class="fa-solid fa-box fs-4 mb-2" style="color: rgb(184, 134, 74);"></i>
+                            <div class="small fw-bold">التوفر</div>
+                            <div class="text-muted small mt-1">
+                                {% if carpet.available and carpet.stock > 0 %}
+                                    <span class="text-success fw-bold">متوفر ({{ carpet.stock }})</span>
+                                {% else %}
+                                    <span class="text-danger fw-bold">نفذت الكمية</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- خيارات الشراء -->
+                <!-- ========================================== -->
+                <div class="purchase-options mt-4">
+                    {% if carpet.available and carpet.stock > 0 %}
+                        <form action="{% url 'cart_add' carpet.id %}" method="POST" class="d-flex align-items-center gap-3">
+                            {% csrf_token %}
+                            <!-- حقل اختيار الكمية -->
+                            <div class="quantity-wrapper">
+                                {{ cart_product_form.quantity }}
+                                {{ cart_product_form.override }}
+                            </div>
+                            <button type="submit" class="add-to-cart btn w-100" style="background-color: #1a1a18; color: white; padding: 12px 30px; font-weight: 600; border-radius: 5px; transition: 0.3s;">
+                                إضافة إلى السلة <i class="fa-solid fa-cart-shopping ms-2"></i>
+                            </button>
+                        </form>
+                    {% else %}
+                        <button class="btn w-100" disabled style="background-color: #e0e0e0; color: #888; padding: 12px 30px; font-weight: 600; border-radius: 5px; cursor: not-allowed;">
+                            عذراً، هذا المنتج غير متوفر حالياً
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+  <!-- منتجات أخرى قد تعجبك -->
+  <section id="farsee" class="pt-5 bg-light mt-5">
+    <div class="container pb-5">
+      <div class="page-header text-center mb-5">
+        <h2 class="page-title fw-bold" style="color: #1a1a18;">منتجات أخرى قد تعجبك</h2>
+        <div style="width: 60px; height: 3px; background-color: rgb(184, 134, 74); margin: 15px auto;"></div>
+      </div>
+
+      <div class="row g-4 px-2">
+        {% for related in related_products %}
+        <div class="col-6 col-md-3 product-col">
+          <div class="product-card shadow-sm rounded overflow-hidden bg-white h-100">
+            <div class="product-img-wrap position-relative">
+              {% if related.image_url %}
+                <img src="{{ related.image_url }}" alt="{{ related.name }}" style="width: 100%; height: 250px; object-fit: cover;">
+              {% else %}
+                <img src="{% static 'images/default_carpet.jpg' %}" alt="صورة" style="width: 100%; height: 250px; object-fit: cover;">
+              {% endif %}
+
+              <!-- إظهار شارة (نفذت الكمية) على المنتجات المشابهة إذا لزم الأمر -->
+              {% if not related.available or related.stock <= 0 %}
+                <div style="position: absolute; top: 10px; right: 10px; background: rgba(220,53,69,0.9); color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">
+                    نفذت الكمية
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="product-info text-center p-3">
+              <div class="details d-flex flex-column justify-content-center align-items-center">
+                  <div class="product-name fw-bold mb-2">{{ related.name }}</div>
+
+                  <div class="d-flex justify-content-center gap-3 mt-2">
+                      {% if related.available and related.stock > 0 %}
+                          <form action="{% url 'cart_add' related.id %}" method="POST" class="m-0 p-0">
+                              {% csrf_token %}
+                              <input type="hidden" name="quantity" value="1">
+                              <button type="submit" style="background: none; border: none; color: rgb(184, 134, 74); font-weight: 600; padding: 0; cursor: pointer;">
+                                  🛒 أضف للسلة
+                              </button>
+                          </form>
+                      {% else %}
+                          <span class="text-muted" style="font-size: 0.9rem;">غير متوفر</span>
+                      {% endif %}
+                      <a href="{% url 'product_detail' related.id %}" style="text-decoration: none; color: #555; font-weight: 500;">
+                          تصفح المنتج
+                      </a>
+                  </div>
+              </div>
+              <div class="product-price mt-3 text-muted fw-bold">{{ related.price }} ج.م</div>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+          <div class="col-12 text-center py-4">
+              <p class="text-muted">لا توجد منتجات أخرى في هذا القسم حالياً.</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+<!-- FOOTER -->
+  <footer id="footer" class="mt-0">
+      <!-- (نفس كود الفوتر الخاص بك) -->
+      <div class="container">
+          <div class="row g-4">
+              <div class="col-12 col-md-4">
+                  <div class="footer-brand">Naseej</div>
+                  <p class="footer-brand-desc">نسيج – أحد المجموعات الخاصة بنا في العالم للمساحات المعاصرة، بالتراث والمساحة والروح الإنسانية.</p>
+              </div>
+              <div class="col-6 col-md-2">
+                  <h6>تسوق</h6>
+                  <ul>
+                      <li><a href="{% url 'home' %}">الرئيسية</a></li>
+                      <li><a href="{% url 'product_list' %}">المنتجات</a></li>
+                  </ul>
+              </div>
+          </div>
+          <div class="footer-bottom">
+              <span>© 2026 نسيج. جميع حقوق النشر والتوزيع محفوظة.</span>
+          </div>
+      </div>
+  </footer>
+
+<!-- Script for Bootstrap -->
+<script src="{% static 'all.css/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

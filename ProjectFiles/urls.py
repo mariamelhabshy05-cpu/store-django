@@ -20,7 +20,15 @@ from django.urls import path
 from django.contrib import admin
 from django.urls import path, include
 
+# 1. أضف هذه الاستدعاءات المهمة
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('app1.urls', namespace='app1')),
+    path('', include('app1.urls')), # ربط تطبيقك
 ]
+
+# 2. أضف هذا السطر في نهاية الملف لكي يسمح جانغو بعرض الصور
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
